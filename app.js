@@ -1,6 +1,6 @@
 import express from 'express'
 import dotenv from 'dotenv'
-import softwareRoutes from './routes/softwareRoutes.js'
+import userRoutes from './routes/userRoutes.js'
 import corsOptions from './middlewares/cors.js'
 import database from './config/db.js'
 
@@ -16,10 +16,10 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 
 app.get('', (req, res) => {
-  res.send('TodoApp back-end')
+  res.send('NoteThat back-end')
 })
 
-app.use('/software', softwareRoutes)
+app.use('/user', userRoutes)
 
 app.listen(port, () => {
   console.log(`Servidor funcionando en puerto ${port}`)
