@@ -18,7 +18,7 @@ const userSchema = new mongoose.Schema({
     type: String,
     required: true
   }
-})
+}, { versionKey: false })
 
 /**
  * userItem: nombre del modelo

@@ -10,7 +10,7 @@ const uri = process.env.DB_URI || 'mongodb://127.0.0.1:27017/TodoApp'
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dbName: 'TodoApp'
+  dbName: 'NoteThat'
 }
 
 mongoose.set('strictQuery', false)
