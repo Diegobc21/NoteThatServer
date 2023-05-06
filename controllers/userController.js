@@ -1,6 +1,5 @@
-import userModel from "../model/userModel.js";
-import encryptPassword from "../helpers/md5.js"
-import {generateToken} from "../helpers/tokens.js"
+import { generateToken } from "../helpers/tokens.js"
+import userModel from "../model/userModel.js"
 
 const getAll = (req, res) => {
   if (req.query.email) { // Search by email
@@ -36,7 +35,6 @@ const getOneByEmail = (req, res) => {
 
 const addOne = (req, res) => {
   const newUser = new userModel(req.body)
-  newUser.password = encryptPassword(req.body.password)
   newUser
     .save()
     .then(
@@ -45,14 +43,40 @@ const addOne = (req, res) => {
 }
 
 const login = (req, res) => {
-  const user = req.body
-  user.token.push(generateToken())
+  const { email, password, actualToken } = req.body
 
-  user
-    .save()
-    .then(
-      res.json(user)
-    ).catch((error) => res.sendStatus(500).send(error))
+  // Comprobar si el usuario existe en la base de datos
+  userModel.findOne({ email }).exec()
+    .then(user => {
+      if (!user) {
+        throw new Error('User does not exist');
+      }
+
+      // Comprobar si la contraseña es correcta
+      if (user.password !== password) {
+        throw new Error('Incorrect password');
+      }
+
+      if (!actualToken || !user.token.includes(actualToken)) {
+        // Generar y almacenar token de inicio de sesión
+        user.token.push(generateToken());
+        user.actualToken = user.token[user.token.length - 1]
+      }
+
+      return user.save();
+    })
+    .then(user => {
+      // Devolver información del usuario con token de inicio de sesión
+      res.status(200).json({
+        fullname: user.fullname,
+        email: user.email,
+        actualToken: user.token[user.token.length - 1]
+      });
+    })
+    .catch(error => {
+      // Manejo de errores
+      res.status(401).json({ error: error.message });
+    });
 }
 
 export default {

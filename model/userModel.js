@@ -21,6 +21,10 @@ const userSchema = new mongoose.Schema({
   token: {
     type: [String],
     required: false
+  },
+  actualToken: {
+    type: String,
+    required: false
   }
 }, { versionKey: false })
 
