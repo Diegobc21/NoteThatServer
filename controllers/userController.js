@@ -83,7 +83,7 @@ const login = (req, res) => {
 }
 
 const logout = (req, res) => {
-  const { email, password, actualToken } = req.body
+  const { email, actualToken } = req.body
 
   userModel.findOne({ email }).exec()
     .then(user => {
