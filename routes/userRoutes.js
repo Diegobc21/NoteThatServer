@@ -1,10 +1,11 @@
+import { verifyToken } from '../middlewares/tokenVerify.js'
 import express from 'express'
 import userController from '../controllers/userController.js'
 
 const router = express.Router()
 
 // Devuelve todos los nombres de los usuarios existentes
-router.get('/', userController.getAll)
+router.get('/', verifyToken, userController.getAll)
 
 // Devuelve un solo usuario por su nombre completo
 router.get('/:fullname', userController.getOneByFullName)

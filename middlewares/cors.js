@@ -1,7 +1,8 @@
 const corsOptions = (req, res, next) => {
-  res.header('Access-Control-Allow-Origin', '*')
-  res.header('Access-Control-Allow-Headers', 'Origin, X-Requested-With, Content-Type, Accept')
-  next()
+  res.setHeader('Access-Control-Allow-Origin', '*'); // Reemplaza con el origen de tu cliente Angular
+  res.setHeader('Access-Control-Allow-Methods', 'GET,PUT,POST,DELETE');
+  res.setHeader('Access-Control-Allow-Headers', '*');
+  next();
 }
 
 export default corsOptions

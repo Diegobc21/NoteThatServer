@@ -1,17 +1,17 @@
-import { generateToken } from "../helpers/tokens.js"
+import { generateToken, jwt } from "../helpers/tokens.js"
 import userModel from "../model/userModel.js"
 
 const getAll = (req, res) => {
-  if (req.query.email) { // Search by email
-    getOneByEmail(req, res)
-  } else { // Search all entries
+  if (req.query.email) { // Búsqueda por correo electrónico
+    getOneByEmail(req, res);
+  } else { // Búsqueda de todas las entradas
     userModel.find()
-      .then((object) => {
-        res.json(object)
+      .then((objects) => {
+        res.json(objects);
       })
-      .catch((error) => res.sendStatus(500).send(error))
+      .catch((error) => res.status(500).send(error));
   }
-}
+};
 
 const getOneByFullName = (req, res) => {
   if (req.params.fullname) {
@@ -28,10 +28,15 @@ const getOneByEmail = (req, res) => {
   userModel
     .findOne({ email: req.query.email })
     .then((object) => {
-      object === null ? res.sendStatus(404) : res.json(object)
+      console.log(object);
+      if (object === null) {
+        res.status(404).json({ error: 'User not found' });
+      } else {
+        res.status(200).json(object);
+      }
     })
-    .catch((error) => res.sendStatus(500).send(error))
-}
+    .catch((error) => res.status(500).send(error));
+};
 
 const addOne = (req, res) => {
   const newUser = new userModel(req.body)
@@ -43,42 +48,35 @@ const addOne = (req, res) => {
 }
 
 const login = (req, res) => {
-  const { email, password, actualToken } = req.body
+  const { email, password } = req.body
+
+  // Create token using JWT
+  const token = jwt.sign({ username: email }, 'token', { expiresIn: '2h' });
 
   // Comprobar si el usuario existe en la base de datos
   userModel.findOne({ email }).exec()
     .then(user => {
       if (!user) {
-        throw new Error('User does not exist');
+        throw new Error('User does not exist')
       }
 
-      // Comprobar si la contraseña es correcta
+      // Verify credentials
       if (user.password !== password) {
-        throw new Error('Incorrect password');
+        throw new Error('Incorrect password')
       }
 
-      if (!actualToken || !user.token.includes(actualToken)) {
-        // Generar y almacenar token de inicio de sesión
-        user.token.push(generateToken());
-        user.actualToken = user.token[user.token.length - 1]
-      } else if (user.token.includes(actualToken)) {
-        const index = user.token.indexOf(actualToken)
-        user.actualToken = user.token[index]
-      }
-
-      return user.save();
+      user.altualToken = token
+      user.save()
     })
-    .then(user => {
-      // Devolver información del usuario con token de inicio de sesión
+    .then(() => {
+      // Return login token & user email
       res.status(200).json({
-        fullname: user.fullname,
-        email: user.email,
-        actualToken: user.token[user.token.length - 1]
+        email: email,
+        actualToken: token
       })
     })
-    .catch(error => {
-      // Manejo de errores
-      res.status(401).json({ error: error.message });
+    .catch(() => {
+      res.status(401).json({ error: 'Invalid credentials' })
     });
 }
 
@@ -88,7 +86,7 @@ const logout = (req, res) => {
   userModel.findOne({ email }).exec()
     .then(user => {
       if (!user) {
-        throw new Error('User does not exist');
+        throw new Error('User does not exist')
       }
 
       if (actualToken && user.token.includes(actualToken)) {
@@ -99,18 +97,14 @@ const logout = (req, res) => {
 
       return user.save();
     })
-    .then(user => {
+    .then(() => {
       // Devolver información del usuario con token de inicio de sesión
-      res.status(200).json({
-        fullname: user.fullname,
-        email: user.email,
-        actualToken: null
-      })
+      res.status(200)
     })
     .catch(error => {
       // Manejo de errores
       res.status(401).json({ error: error.message });
-    });
+    })
 }
 
 export default {
