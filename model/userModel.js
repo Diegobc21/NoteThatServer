@@ -17,14 +17,6 @@ const userSchema = new mongoose.Schema({
   password: {
     type: String,
     required: true
-  },
-  token: {
-    type: [String],
-    required: false
-  },
-  actualToken: {
-    type: String,
-    required: false
   }
 }, { versionKey: false })
 

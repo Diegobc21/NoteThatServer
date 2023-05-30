@@ -20,7 +20,7 @@ export default {
   connect: function () {
     mongoose.connect(uri, options)
       .then(
-        console.log('MongoDB conectado')
+        console.log('Base de datos conectada')
       ).catch((err) =>
         console.log(err)
       )
