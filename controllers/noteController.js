@@ -19,7 +19,18 @@ const addOne = (req, res) => {
         ).catch((error) => res.sendStatus(500).send(error))
 }
 
+const deleteNoteById = (req, res) => {
+    const { id } = req.params;
+
+    model
+        .deleteOne({ _id: id })
+        .then(
+            res.json(id)
+        ).catch((error) => res.sendStatus(500).send(error))
+}
+
 export default {
     getNotesByUserEmail,
-    addOne
+    addOne,
+    deleteNoteById
 }

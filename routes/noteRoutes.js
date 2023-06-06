@@ -9,4 +9,6 @@ router.get('/', verifyToken, noteController.getNotesByUserEmail)
 
 router.post('/', verifyToken, noteController.addOne)
 
+router.delete('/:id', verifyToken, noteController.deleteNoteById);
+
 export default router

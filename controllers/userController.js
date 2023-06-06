@@ -47,7 +47,7 @@ const addOne = (req, res) => {
 const login = (req, res) => {
   const { email, password } = req.body
 
-  const token = jwt.sign({ username: email }, 'token', { expiresIn: '15m' });
+  const token = jwt.sign({ username: email }, 'token');
 
   userModel.findOne({ email }).exec()
     .then(user => {
