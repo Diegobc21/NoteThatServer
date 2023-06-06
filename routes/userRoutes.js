@@ -14,6 +14,4 @@ router.post('/register', userController.addOne)
 
 router.post('/login', userController.login)
 
-router.post('/logout', userController.logout)
-
 export default router
