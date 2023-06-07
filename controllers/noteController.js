@@ -22,12 +22,12 @@ const addOne = (req, res) => {
 }
 
 const deleteNoteById = (req, res) => {
-    const { _id } = req.params
+    const { id } = req.params
 
     model
-        .deleteOne({ _id })
+        .deleteOne({ _id: id })
         .then(
-            res.json(_id)
+            res.json(id)
         ).catch((error) => res.sendStatus(500).send(error))
 }
 
