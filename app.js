@@ -2,6 +2,7 @@ import express from 'express'
 import dotenv from 'dotenv'
 import userRoutes from './routes/userRoutes.js'
 import noteRoutes from './routes/noteRoutes.js'
+import spotifyRoutes from './routes/spotifyRoutes.js'
 import corsOptions from './middlewares/cors.js'
 import database from './config/db.js'
 
@@ -22,6 +23,7 @@ app.get('', (req, res) => {
 
 app.use('/user', userRoutes)
 app.use('/note', noteRoutes)
+app.use('/spotify', spotifyRoutes)
 
 app.listen(port, () => {
   console.log(`Servidor funcionando en puerto ${port}`)
