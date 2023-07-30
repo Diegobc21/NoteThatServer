@@ -1,12 +1,12 @@
-import model from "../model/noteModel.js";
+import model from "../model/noteModel.js"
 
 const getNotesByUserEmail = (req, res) => {
     const email = req.query.email
-    
+
     if (email) {
-        model.find({user: email})
+        model.find({ user: email })
             .then((notes) => {
-                res.json(notes);
+                res.json(notes)
             })
             .catch((error) => res.status(500).send(error))
     }
@@ -18,6 +18,15 @@ const addOne = (req, res) => {
         .save()
         .then(
             res.json(newNote)
+        ).catch((error) => res.sendStatus(500).send(error))
+}
+
+const editNote = (req, res) => {
+    const noteId = req.params.id;
+    const updatedNote = req.body;
+
+    model.findByIdAndUpdate(noteId, updatedNote, { new: true })
+        .then((updatedNote) => res.json(updatedNote)
         ).catch((error) => res.sendStatus(500).send(error))
 }
 
@@ -34,5 +43,6 @@ const deleteNoteById = (req, res) => {
 export default {
     getNotesByUserEmail,
     addOne,
+    editNote,
     deleteNoteById
 }

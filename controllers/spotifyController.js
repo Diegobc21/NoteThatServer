@@ -1,5 +1,21 @@
+import querystring from 'querystring';
+
 // Authorization token that must have been created previously. See : https://developer.spotify.com/documentation/web-api/concepts/authorization
-const token = 'BQApMLSsPAa_JikP-yz_etKmIXj59RkX4JJwBiuGvDhVYK5RCvwnfsxsKI3DLP9PCobYDzWXSURNs9_szFcaBSLsl3iuZNZvnAMYY5DNMIpz_ydLqMuDi8wmd5kLZ-cqvtCIa7rP8hSsMVPnycyIaa148Ih6FA52Nb29KcQfDU0WvK2peo0Ih9_5DQ8JD9nH60H8E3SJ75qu7LKPSuW0rIMsuPLaYDOfzvbpoxKN1yDHx-5UiunENbssH8pszBlTdQ';
+const token = 'invented';
+
+
+var client_id = '6168a0a8959b43c99bc7dc3dc8c4d361';
+var redirect_uri = 'http://localhost:4100';
+
+var generateRandomString = (length) => {
+    var text = '';
+    var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  
+    for (var i = 0; i < length; i++) {
+      text += possible.charAt(Math.floor(Math.random() * possible.length));
+    }
+    return text;
+  };
 
 async function fetchWebApi(endpoint, method, body) {
     const res = await fetch(`https://api.spotify.com/${endpoint}`, {
@@ -23,9 +39,24 @@ const getTopTracks = async (req, res) => {
     )
 
     res.json(response);
-
 }
 
+const login = (req, res) => {
+
+    var state = generateRandomString(16);
+    var scope = 'user-read-private user-read-email';
+  
+    res.redirect('https://accounts.spotify.com/authorize?' +
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        scope: scope,
+        redirect_uri: redirect_uri,
+        state: state
+      }));
+  }
+
 export default {
-    getTopTracks
+    getTopTracks,
+    login
 }
