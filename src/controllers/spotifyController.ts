@@ -1,4 +1,4 @@
-import querystring from 'querystring';
+const querystring = require('querystring');
 
 // Authorization token that must have been created previously. See : https://developer.spotify.com/documentation/web-api/concepts/authorization
 const token = 'invented';
@@ -7,7 +7,7 @@ const token = 'invented';
 var client_id = '6168a0a8959b43c99bc7dc3dc8c4d361';
 var redirect_uri = 'http://localhost:4100';
 
-var generateRandomString = (length) => {
+var generateRandomString = (length: any) => {
     var text = '';
     var possible = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   
@@ -17,7 +17,7 @@ var generateRandomString = (length) => {
     return text;
   };
 
-async function fetchWebApi(endpoint, method, body) {
+async function fetchWebApi(endpoint: any, method: any, body: any) {
     const res = await fetch(`https://api.spotify.com/${endpoint}`, {
         headers: {
             Authorization: `Bearer ${token}`,
@@ -29,19 +29,19 @@ async function fetchWebApi(endpoint, method, body) {
 }
 
 
-const getTopTracks = async (req, res) => {
+const getTopTracks = async (req: any, res: any) => {
     const topTracks = (await fetchWebApi(
-        'v1/me/top/tracks?time_range=short_term&limit=5', 'GET'
+        'v1/me/top/tracks?time_range=short_term&limit=5', 'GET', {}
     )).items
     const response = topTracks?.map(
-        ({ name, artists }) =>
-            `${name} by ${artists.map(artist => artist.name).join(', ')}`
-    )
+      ({ name, artists }: { name: string, artists: { name: string }[] }) =>
+        `${name} by ${artists.map((artist) => artist.name).join(', ')}`
+    );    
 
     res.json(response);
 }
 
-const login = (req, res) => {
+const login = (req: any, res: any) => {
 
     var state = generateRandomString(16);
     var scope = 'user-read-private user-read-email';

@@ -1,6 +1,6 @@
-import crypto from 'crypto';
+const crypto = require('crypto');
 
-const encryptPassword = (password) => {
+const encryptPassword = (password: string) => {
     // Creamos un objeto de hash MD5
     const md5 = crypto.createHash('md5');
 

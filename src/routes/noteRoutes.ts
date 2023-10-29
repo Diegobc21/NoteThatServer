@@ -1,6 +1,7 @@
-import express from 'express'
 import noteController from '../controllers/noteController.js'
 import { verifyToken } from '../middlewares/tokenVerify.js'
+
+const express = require('express');
 
 const router = express.Router()
 
