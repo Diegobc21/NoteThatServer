@@ -5,9 +5,9 @@
   "type": "commonjs",
   "main": "dist/app.cjs",
   "scripts": {
-    "build": "node build.js",
-    "start": "node dist/app.cjs",
-    "watch": "\"node dist/app.cjs\" concurrently \"npx tsc --watch\" \"nodemon -q dist/app.cjs\""
+    "build": "npx tsc && node build.js",
+    "start": "npm run build && node dist/app.cjs",
+    "watch": "concurrently \"npx tsc --watch\" \"nodemon -q dist/app.cjs\""
   },
   "keywords": [],
   "author": "",
