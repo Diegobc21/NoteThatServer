@@ -4,8 +4,8 @@ import noteRoutes from "./routes/noteRoutes.js";
 import spotifyRoutes from "./routes/spotifyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
-const express = require("express");
-const dotenv = require("dotenv");
+import express from "express";
+import dotenv from "dotenv";
 
 database.connect();
 dotenv.config();

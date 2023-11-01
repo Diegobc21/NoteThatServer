@@ -1,13 +1,13 @@
 {
-  "name": "backend",
+  "name": "NoteThat_server",
   "version": "1.0.0",
-  "description": "",
-  "type": "commonjs",
-  "main": "dist/app.cjs",
+  "description": "Server for NoteThat app",
+  "type": "module",
+  "main": "dist/index.cjs",
   "scripts": {
-    "build": "npx tsc && node build.js",
-    "start": "npm run build && node dist/app.cjs",
-    "watch": "concurrently \"npx tsc --watch\" \"nodemon -q dist/app.cjs\""
+    "build": "tsc",
+    "start": "node ./dist/index.js",
+    "watch": "concurrently \"npx tsc --watch\" \"nodemon -q ./dist/index.js\""
   },
   "keywords": [],
   "author": "",

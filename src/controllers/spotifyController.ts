@@ -1,4 +1,4 @@
-const querystring = require('querystring');
+import querystring from'querystring';
 
 // Authorization token that must have been created previously. See : https://developer.spotify.com/documentation/web-api/concepts/authorization
 const token = 'invented';

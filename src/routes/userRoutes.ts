@@ -1,7 +1,6 @@
 import userController from '../controllers/userController.js'
 import { verifyToken } from '../middlewares/tokenVerify.js'
-
-const express = require('express');
+import express from 'express';
 
 const router = express.Router()
 

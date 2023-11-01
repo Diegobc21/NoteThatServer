@@ -1,7 +1,7 @@
 import spotifyController from "../controllers/spotifyController.js";
+import express from "express";
+import querystring from "querystring";
 
-const express = require("express");
-const querystring = require("querystring");
 const router = express.Router();
 
 // Devuelve todos los usuarios existentes o uno por su email
