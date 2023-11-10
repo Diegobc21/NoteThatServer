@@ -7,25 +7,36 @@ import userRoutes from "./routes/userRoutes.js";
 import express from "express";
 import dotenv from "dotenv";
 
-database.connect();
-dotenv.config();
-
 const port = process.env.PORT || 3000;
 
 const app = express();
 
-app.use(corsOptions);
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+database
+  .connect()
+  .then(() => {
+    console.log("💾 Base de datos conectada");
+    dotenv.config();
 
-app.get("", (req: any, res: any) => {
-  res.send("NoteThat back-end");
-});
+    app.use(corsOptions);
+    app.use(express.json());
+    app.use(express.urlencoded({ extended: true }));
 
-app.use("/user", userRoutes);
-app.use("/note", noteRoutes);
-app.use("/spotify", spotifyRoutes);
+    app.get("", (req, res) => {
+      res.send("NoteThat back-end");
+    });
 
-app.listen(port, () => {
-  console.log(`⚡️ Servidor funcionando en puerto ${port}`);
-});
+    app.use("/user", userRoutes);
+    app.use("/note", noteRoutes);
+    app.use("/spotify", spotifyRoutes);
+
+    app.listen(port, () => {
+      console.log(`⚡️ Servidor funcionando en puerto ${port}`);
+    });
+  })
+  .catch((err) => {
+    console.error("Error de conexión a la base de datos:", err);
+    app.get("*", (req, res) => {
+      res.status(500).send(err);
+    });
+    process.exit(1);
+  });

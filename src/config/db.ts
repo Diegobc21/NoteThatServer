@@ -10,17 +10,14 @@ const uri = process.env.DB_URI || "mongodb://127.0.0.1:27017/TodoApp";
 const options = {
   useNewUrlParser: true,
   useUnifiedTopology: true,
-  dbName: "NoteThat",
+  dbName: "NoteThat"
 };
 
 mongoose.set("strictQuery", false);
 
-// Se exporta la función que inicia la conexión a la BBDD
+// Se exporta la función que contiene la promesa que inicia la conexión a la BBDD
 export default {
   connect: function () {
-    mongoose
-      .connect(uri, options)
-      .then(() => console.log("💾 Base de datos conectada"))
-      .catch((err) => console.log(err));
-  },
-};
+    return mongoose.connect(uri, options)
+  }
+}

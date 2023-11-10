@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "description": "Server for NoteThat app",
   "type": "module",
-  "main": "dist/index.cjs",
+  "main": "dist/index.js",
   "scripts": {
     "build": "tsc",
     "start": "node ./dist/index.js",
