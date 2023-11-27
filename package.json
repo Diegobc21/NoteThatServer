@@ -1,5 +1,5 @@
 {
-  "name": "NoteThat_server",
+  "name": "notethat_server",
   "version": "1.0.0",
   "description": "Server for NoteThat app",
   "type": "module",
