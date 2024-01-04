@@ -1,18 +1,13 @@
 
-# UJA-Soft-Pack (Servidor)
+# NoteThatServer
 
-## Descripción
-Servidor para el Trabajo Fin de Grado "Desarrollo de un prototipo para un sistema de gestión de aplicaciones software para instalar" 
+## Description
+Nodejs based server for NoteThatApp 
 
-Ingeniería Informatica 
-Universidad de Jaén
+Created by Diego Barrales
 
-Realizado por Diego Barrales Castillo
+## Setup
 
-## Puesta en marcha
+1. Install dependencies: `npm install`
 
-1. Abrir la terminal (ventana de comandos) en la raíz del repositorio
-
-2. Instalar dependencias con el siguiente comando: `npm install`
-
-3. Poner en marcha con el comando: `npm run start`
+2. Start server: `npm run start`
