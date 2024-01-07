@@ -3,6 +3,7 @@ import corsOptions from "./middlewares/cors.js";
 import noteRoutes from "./routes/noteRoutes.js";
 import spotifyRoutes from "./routes/spotifyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
+import passwordRoutes from "./routes/passwordRoutes.js";
 
 import express from "express";
 import dotenv from "dotenv";
@@ -28,6 +29,7 @@ database
     app.use("/user", userRoutes);
     app.use("/note", noteRoutes);
     app.use("/spotify", spotifyRoutes);
+    app.use("/password", passwordRoutes);
 
     app.listen(port, () => {
       console.log(`⚡️ Servidor funcionando en puerto ${port}`);
