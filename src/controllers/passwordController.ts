@@ -1,5 +1,6 @@
 import Password from "../model/passwordModel.js";
 import Section from "../model/sectionModel.js";
+import User from "../model/userModel.js";
 
 // Obtener todas las contraseñas del usuario
 export const getAllPasswords = (req: any, res: any): void => {
@@ -12,12 +13,12 @@ export const getAllPasswords = (req: any, res: any): void => {
 };
 
 // Obtener todas las contraseñas del usuario
-export const getAllSections = (req: any, res: any) => {
+export const getUserSections = (req: any, res: any) => {
   const user = req.params.user;
+  
   if (user) {
     Section.find({ user })
       .then((sections) => {
-        console.log(sections)
         res.json(sections);
       })
       .catch((error) => res.status(500).send(error));
@@ -25,13 +26,39 @@ export const getAllSections = (req: any, res: any) => {
 };
 
 // Obtener contraseñas por sección
-export const getPasswordsBySection = (req: any, res: any): void => {
-  const { section, user } = req.params;
+export const getPasswordsBySection = async (req: any, res: any): Promise<void> => {
+  const { section } = req.params;
+  const user = req.user.username;
   try {
-    const userPasswords = Password.find({ user, section });
-    res.json(userPasswords);
+    // Busca el usuario por su email
+    if (!await User.findOne({ email: user })) {
+      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    }
+
+    // Busca la sección por su nombre
+    const sectionObj = await Section.findOne({ title: section });
+
+    if (!sectionObj) {
+      return res.status(404).json({ mensaje: "Sección no encontrada" });
+    }
+
+    // Busca la contraseña correspondiente al usuario y sección
+    const password = await Password.findOne({
+      user,
+      section,
+    });
+
+    if (!password) {
+      return res.status(404).json({
+        mensaje: "Contraseña no encontrada para esta sección y usuario",
+      });
+    }
+
+    // Devuelve la contraseña de la sección especificada
+    res.json({ contrasena: password.password });
   } catch (error) {
-    res.status(500).json({ error: "Error: cannot get passwords by section" });
+    console.error("Error al obtener contraseñas:", error);
+    res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
 

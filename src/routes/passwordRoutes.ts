@@ -4,7 +4,7 @@ import {
   getPasswordsBySection,
   addPassword,
   addSection,
-  getAllSections
+  getUserSections
 } from "../controllers/passwordController.js";
 import { verifyToken } from "../middlewares/tokenVerify.js";
 
@@ -14,7 +14,7 @@ router.get("/", verifyToken, getAllPasswords);
 
 router.get("/:section", verifyToken, getPasswordsBySection);
 
-router.get("/section/:user", verifyToken, getAllSections);
+router.get("/section/:user", verifyToken, getUserSections);
 
 router.post("/newSection", verifyToken, addSection);
 

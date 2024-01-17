@@ -9,8 +9,9 @@ const passwordSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    email: {
+    user: {
       type: String,
+      required: true,
     },
     section: {
       type: String,
@@ -23,11 +24,7 @@ const passwordSchema = new mongoose.Schema(
     creationDate: {
       type: String,
       default: Date.now(),
-    },
-    user: {
-      type: String,
-      required: true,
-    },
+    }
   },
   { versionKey: false }
 );
