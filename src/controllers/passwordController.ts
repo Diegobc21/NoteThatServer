@@ -12,10 +12,10 @@ export const getAllPasswords = (req: any, res: any): void => {
   }
 };
 
-// Obtener todas las contraseñas del usuario
+// Obtener todas las secciones del usuario
 export const getUserSections = (req: any, res: any) => {
   const user = req.params.user;
-  
+
   if (user) {
     Section.find({ user })
       .then((sections) => {
@@ -26,36 +26,39 @@ export const getUserSections = (req: any, res: any) => {
 };
 
 // Obtener contraseñas por sección
-export const getPasswordsBySection = async (req: any, res: any): Promise<void> => {
+export const getPasswordsBySection = async (
+  req: any,
+  res: any
+): Promise<void> => {
   const { section } = req.params;
   const user = req.user.username;
   try {
     // Busca el usuario por su email
-    if (!await User.findOne({ email: user })) {
-      return res.status(404).json({ mensaje: "Usuario no encontrado" });
+    if (!(await User.findOne({ email: user }))) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
     // Busca la sección por su nombre
     const sectionObj = await Section.findOne({ title: section });
 
     if (!sectionObj) {
-      return res.status(404).json({ mensaje: "Sección no encontrada" });
+      return res.status(404).json({ message: "Sección no encontrada" });
     }
 
     // Busca la contraseña correspondiente al usuario y sección
-    const password = await Password.findOne({
+    const password = await Password.find({
       user,
       section,
     });
 
     if (!password) {
       return res.status(404).json({
-        mensaje: "Contraseña no encontrada para esta sección y usuario",
+        message: "Contraseña no encontrada para esta sección y usuario",
       });
     }
 
     // Devuelve la contraseña de la sección especificada
-    res.json({ contrasena: password.password });
+    res.json(password);
   } catch (error) {
     console.error("Error al obtener contraseñas:", error);
     res.status(500).json({ mensaje: "Error interno del servidor" });
@@ -68,6 +71,15 @@ export const addPassword = (req: any, res: any): void => {
   newPass
     .save()
     .then(res.json(newPass))
+    .catch((error) => res.sendStatus(500).send(error));
+};
+
+// Eliminar una contraseña
+export const deletePasswordById = (req: any, res: any) => {
+  const { id } = req.params;
+
+  Password.deleteOne({ _id: id })
+    .then(res.json(id))
     .catch((error) => res.sendStatus(500).send(error));
 };
 
