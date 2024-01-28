@@ -6,6 +6,7 @@ import {
   addSection,
   getUserSections,
   deletePasswordById,
+  removeSection,
 } from "../controllers/passwordController.js";
 import { verifyToken } from "../middlewares/tokenVerify.js";
 
@@ -17,10 +18,12 @@ router.get("/:section", verifyToken, getPasswordsBySection);
 
 router.get("/section/:user", verifyToken, getUserSections);
 
-router.post("/section", verifyToken, addSection);
-
 router.post("/", verifyToken, addPassword);
 
+router.post("/section", verifyToken, addSection);
+
 router.delete("/:id", verifyToken, deletePasswordById);
+
+router.delete("/section/:id", verifyToken, removeSection);
 
 export default router;

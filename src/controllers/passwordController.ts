@@ -84,7 +84,7 @@ export const deletePasswordById = (req: any, res: any) => {
 };
 
 // Agregar una nueva sección
-export const addSection = async (req: any, res: any): Promise<void> => {
+export const addSection = async (req: any, res: any) => {
   try {
     const { title } = req.body;
 
@@ -110,6 +110,44 @@ export const addSection = async (req: any, res: any): Promise<void> => {
     const savedSection = await newSection.save();
 
     res.status(201).json(savedSection);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+};
+
+// Eliminar una sección y sus contraseñas
+export const removeSection = async (req: any, res: any) => {
+  try {
+    const { id } = req.params;
+
+    if (!id) {
+      res.status(400).json({ error: "El ID de la sección es obligatorio." });
+      return;
+    }
+
+    // Verificar si la sección ya existe
+    const existingSection = await Section.findOne({ _id: id });
+
+    if (!existingSection) {
+      res
+        .status(409)
+        .json({ error: "La sección no existe en la base de datos." });
+      return;
+    }
+
+    // Si existe, eliminar la sección y sus contraseñas asociadas
+    const removedSection = await Section.deleteOne({ _id: id })
+      .then(() => {
+        Password.deleteMany({
+          section: existingSection.title,
+        }).then();
+        res.status(200);
+      })
+      .catch((error) => res.sendStatus(500).send(error));
+
+
+    res.status(201).json(removedSection);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error interno del servidor." });
