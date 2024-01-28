@@ -2,10 +2,7 @@ import mongoose from "mongoose";
 
 const passwordSchema = new mongoose.Schema(
   {
-    username: {
-      type: String,
-    },
-    url: {
+    title: {
       type: String,
       required: true,
     },
@@ -21,10 +18,13 @@ const passwordSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    username: {
+      type: String,
+    },
     creationDate: {
       type: String,
       default: Date.now(),
-    }
+    },
   },
   { versionKey: false }
 );

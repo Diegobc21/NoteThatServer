@@ -26,15 +26,13 @@ export const getUserSections = (req: any, res: any) => {
 };
 
 // Obtener contraseñas por sección
-export const getPasswordsBySection = async (
-  req: any,
-  res: any
-): Promise<void> => {
+export const getPasswordsBySection = async (req: any, res: any) => {
   const { section } = req.params;
-  const user = req.user.username;
+  const email = req.user.username;
+
   try {
     // Busca el usuario por su email
-    if (!(await User.findOne({ email: user }))) {
+    if (!(await User.findOne({ email }))) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
 
@@ -46,8 +44,8 @@ export const getPasswordsBySection = async (
     }
 
     // Busca la contraseña correspondiente al usuario y sección
-    const password = await Password.find({
-      user,
+    let password = await Password.find({
+      user: email,
       section,
     });
 
@@ -57,7 +55,11 @@ export const getPasswordsBySection = async (
       });
     }
 
-    // Devuelve la contraseña de la sección especificada
+    // password.forEach((pass) =>
+    //   pass.password = '********',
+    // )
+
+    // Devuelve las contraseñas de la sección especificada
     res.json(password);
   } catch (error) {
     console.error("Error al obtener contraseñas:", error);
@@ -145,7 +147,6 @@ export const removeSection = async (req: any, res: any) => {
         res.status(200);
       })
       .catch((error) => res.sendStatus(500).send(error));
-
 
     res.status(201).json(removedSection);
   } catch (error) {
