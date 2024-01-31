@@ -18,6 +18,9 @@ const passwordSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    email: {
+      type: String,
+    },
     username: {
       type: String,
     },
