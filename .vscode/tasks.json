@@ -6,6 +6,9 @@
       "type": "npm",
       "script": "start",
       "isBackground": true,
+      "runOptions": {
+        "runOn": "folderOpen"
+      },
       "problemMatcher": {
         "owner": "typescript",
         "pattern": "$tsc",
@@ -24,9 +27,6 @@
       "type": "npm",
       "script": "watch",
       "isBackground": true,
-      "runOptions": {
-        "runOn": "folderOpen"
-      },
       "problemMatcher": {
         "owner": "typescript",
         "pattern": "$tsc",
