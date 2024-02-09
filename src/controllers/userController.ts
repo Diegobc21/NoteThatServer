@@ -1,7 +1,7 @@
 import { jwt } from "../helpers/tokens.js";
 import userModel from "../model/userModel.js";
 
-const getAll = (req: any, res: any) => {
+export const getAll = async (req: any, res: any) => {
   if (req.query.email) {
     // Búsqueda por correo electrónico
     getOneByEmail(req, res);
@@ -16,7 +16,7 @@ const getAll = (req: any, res: any) => {
   }
 };
 
-const getOneByFullName = (req: any, res: any) => {
+export const getOneByFullName = async (req: any, res: any) => {
   if (req.params.fullname) {
     userModel
       .findOne({ fullname: req.params.fullname })
@@ -27,7 +27,7 @@ const getOneByFullName = (req: any, res: any) => {
   }
 };
 
-const getOneByEmail = (req: any, res: any) => {
+export const getOneByEmail = async (req: any, res: any) => {
   userModel
     .findOne({ email: req.query.email })
     .then((object) => {
@@ -38,7 +38,7 @@ const getOneByEmail = (req: any, res: any) => {
     .catch((error) => res.status(500).send(error));
 };
 
-const addOne = (req: any, res: any) => {
+export const addOne = async (req: any, res: any) => {
   const newUser = new userModel(req.body);
   newUser
     .save()
@@ -46,10 +46,8 @@ const addOne = (req: any, res: any) => {
     .catch((error) => res.sendStatus(500).send(error));
 };
 
-const login = (req: any, res: any) => {
+export const login = async (req: any, res: any): Promise<void> => {
   const { email, password } = req.body;
-
-  const token = jwt.sign({ username: email }, "token");
 
   userModel
     .findOne({ email })
@@ -66,6 +64,7 @@ const login = (req: any, res: any) => {
       user?.save();
     })
     .then(() => {
+      const token = jwt.sign({ username: email }, "token");
       res.status(200).json({
         email,
         token,
@@ -74,11 +73,4 @@ const login = (req: any, res: any) => {
     .catch(() => {
       res.status(401);
     });
-};
-
-export default {
-  getAll,
-  getOneByFullName,
-  addOne,
-  login,
 };

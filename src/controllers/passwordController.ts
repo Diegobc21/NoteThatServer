@@ -3,7 +3,7 @@ import Section from "../model/sectionModel.js";
 import User from "../model/userModel.js";
 
 // Obtener todas las contraseñas del usuario
-export const getAllPasswords = (req: any, res: any): void => {
+export const getAllPasswords = async (req: any, res: any): Promise<void> => {
   try {
     const userPasswords = Password.find({ user: req.user });
     res.json(userPasswords);
@@ -13,7 +13,7 @@ export const getAllPasswords = (req: any, res: any): void => {
 };
 
 // Obtener todas las secciones del usuario
-export const getUserSections = (req: any, res: any) => {
+export const getUserSections = async (req: any, res: any) => {
   const user = req.params.user;
 
   if (user) {
@@ -54,10 +54,6 @@ export const getPasswordsBySection = async (req: any, res: any) => {
         message: "Contraseña no encontrada para esta sección y usuario",
       });
     }
-
-    // password.forEach((pass) =>
-    //   pass.password = '********',
-    // )
 
     // Devuelve las contraseñas de la sección especificada
     res.json(password);
@@ -133,7 +129,7 @@ export const removeSection = async (req: any, res: any) => {
 
     if (!existingSection) {
       res
-        .status(409)
+        .status(404)
         .json({ error: "La sección no existe en la base de datos." });
       return;
     }
@@ -141,9 +137,9 @@ export const removeSection = async (req: any, res: any) => {
     // Si existe, eliminar la sección y sus contraseñas asociadas
     const removedSection = await Section.deleteOne({ _id: id })
       .then(() => {
-        Password.deleteMany({
-          section: existingSection.title,
-        }).then();
+        Password.deleteMany({ section: existingSection.title }).then(
+          () => null
+        );
         res.status(200);
       })
       .catch((error) => res.sendStatus(500).send(error));
@@ -152,5 +148,26 @@ export const removeSection = async (req: any, res: any) => {
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error interno del servidor." });
+  }
+};
+
+// Obtener todas las contraseñas del usuario
+export const makePasswordsVisible = async (
+  req: any,
+  res: any
+): Promise<void> => {
+  try {
+    const { email, password } = req.body;
+    User.findOne({ email }).then((user) => {
+      if (user?.password === password) {
+        res.status(200).json({ valid: true });
+        return;
+      } else {
+        res.status(500).json({ valid: false });
+        return;
+      }
+    }).catch((error) => res.sendStatus(500).json(error));
+  } catch (error) {
+    res.status(500).json({ error: "Error retrieving passwords." });
   }
 };

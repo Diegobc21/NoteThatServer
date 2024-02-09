@@ -7,6 +7,7 @@ import {
   getUserSections,
   deletePasswordById,
   removeSection,
+  makePasswordsVisible
 } from "../controllers/passwordController.js";
 import { verifyToken } from "../middlewares/tokenVerify.js";
 
@@ -19,6 +20,8 @@ router.get("/:section", verifyToken, getPasswordsBySection);
 router.get("/section/:user", verifyToken, getUserSections);
 
 router.post("/", verifyToken, addPassword);
+
+router.post("/make-visible", verifyToken, makePasswordsVisible);
 
 router.post("/section", verifyToken, addSection);
 
