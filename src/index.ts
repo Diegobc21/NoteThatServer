@@ -4,6 +4,7 @@ import noteRoutes from "./routes/noteRoutes.js";
 import spotifyRoutes from "./routes/spotifyRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
+import quoteRoutes from "./routes/quoteRoutes.js";
 
 import express from "express";
 import dotenv from "dotenv";
@@ -26,6 +27,7 @@ app.use("/user", userRoutes);
 app.use("/note", noteRoutes);
 app.use("/spotify", spotifyRoutes);
 app.use("/password", passwordRoutes);
+app.use("/quote", quoteRoutes);
 
 app.listen(port, () => {
   console.log(`⚡️ Servidor funcionando en puerto ${port}`);
