@@ -3,19 +3,17 @@ import dotenv from "dotenv";
 
 dotenv.config();
 
-// URI para conectar al cluster
+// URI to connect to cluster
 const uri = process.env.DB_URI || "mongodb://127.0.0.1:27017/TodoApp";
 
-// Opciones para el cliente de MongoDB
+// MongoDB client options
 const options = {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
   dbName: "NoteThat"
 };
 
 mongoose.set("strictQuery", false);
 
-// Se exporta la función que contiene la promesa que inicia la conexión a la BBDD
+// DDBB connection function
 export default {
   connect: function () {
     return mongoose.connect(uri, options)

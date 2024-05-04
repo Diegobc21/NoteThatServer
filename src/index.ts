@@ -25,7 +25,7 @@ app.get("", (req, res) => {
 
 app.use("/user", userRoutes);
 app.use("/note", noteRoutes);
-app.use("/spotify", spotifyRoutes);
+//app.use("/spotify", spotifyRoutes);
 app.use("/password", passwordRoutes);
 app.use("/quote", quoteRoutes);
 
