@@ -2,13 +2,12 @@ import database from "./config/db.js";
 import corsOptions from "./middlewares/cors.js";
 import noteRoutes from "./routes/noteRoutes.js";
 //import spotifyRoutes from "./routes/spotifyRoutes.js";
-import userRoutes from "./routes/userRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
+import userRoutes from "./routes/userRoutes.js";
 
-import express from "express";
-import cors from "cors";
 import dotenv from "dotenv";
+import express from "express";
 
 const port = process.env.PORT || 3000;
 

@@ -1,14 +1,12 @@
 const corsOptions = (req: any, res: any, next: any) => {
-  res.setHeader('Access-Control-Allow-Origin', '*')
-  res.setHeader(
-    "Access-Control-Allow-Methods",
-    "GET, POST, PATCH, PUT, DELETE, OPTIONS"
-  );
+  res.setHeader("Access-Control-Allow-Origin", "*");
+  res.setHeader("Access-Control-Allow-Credentials", "true");
+  res.setHeader("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT");
   res.setHeader(
     "Access-Control-Allow-Headers",
-    "Origin, Content-Type, X-Auth-Token"
+    "Access-Control-Allow-Headers, Origin,Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers"
   );
   next();
-}
+};
 
-export default corsOptions
+export default corsOptions;
