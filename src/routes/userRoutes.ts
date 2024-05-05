@@ -13,7 +13,7 @@ const router = express.Router()
 router.get('/', verifyToken, getAll)
 
 // Devuelve un solo usuario por su nombre completo
-router.get("/:fullname", verifyToken, getOneByFullName);
+router.get("/:fullname", getOneByFullName);
 
 router.post('/register', addOne)
 

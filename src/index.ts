@@ -1,11 +1,12 @@
 import database from "./config/db.js";
-import corsOptions from "./middlewares/cors.js";
+// import corsOptions from "./middlewares/cors.js";
 import noteRoutes from "./routes/noteRoutes.js";
 //import spotifyRoutes from "./routes/spotifyRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
+import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 
@@ -15,7 +16,7 @@ const app = express();
 
 dotenv.config();
 
-app.use(corsOptions);
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
