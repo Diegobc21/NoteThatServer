@@ -16,7 +16,7 @@ const app = express();
 
 dotenv.config();
 
-app.use(cors(corsOptions));
+app.use(corsOptions);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
