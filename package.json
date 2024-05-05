@@ -5,14 +5,17 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "build": "tsc",
+    "build": "tsc && node build.js",
     "start": "node ./dist/index.js",
-    "watch": "concurrently \"npx tsc --watch\" \"node --watch ./dist/index.js\""
+    "watch": "concurrently \"npx tsc --watch\" \"node build.js --watch\" \"node --watch ./dist/index.js\""
   },
   "keywords": [],
-  "author": "",
+  "author": "Diego Barrales Castillo",
   "license": "ISC",
   "dependencies": {
+    "@node-minify/core": "^8.0.6",
+    "@node-minify/html-minifier": "^8.0.6",
+    "@node-minify/uglify-js": "^8.0.6",
     "@types/axios": "^0.14.0",
     "axios": "^1.6.8",
     "cors": "^2.8.5",

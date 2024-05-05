@@ -1,12 +1,47 @@
-import fs from 'fs';
-import path from 'path';
+import fs from "fs";
+import path from "path";
+import minify from "@node-minify/core";
+import htmlMinifier from "@node-minify/html-minifier";
+import jsMinifier from "@node-minify/uglify-js";
 
-const sourceDir = './dist';
+const sourceFolder = path.join("./", "src", "public");
+const destinationFolder = path.join("./", "dist", "public");
 
-fs.readdirSync(sourceDir).forEach((file) => {
-  if (file.endsWith('.js')) {
-    const oldPath = path.join(sourceDir, file);
-    const newPath = path.join(sourceDir, file.replace('.js', '.cjs'));
-    fs.renameSync(oldPath, newPath);
-  }
+// Create destination public folder
+fs.mkdirSync(destinationFolder, { recursive: true });
+
+fs.readdirSync(sourceFolder).forEach((file) => {
+  const sourceFile = path.join(sourceFolder, file);
+  const destinationFile = path.join(destinationFolder, file);
+  fs.copyFileSync(sourceFile, destinationFile);
 });
+
+const distPath = "./dist";
+
+function minifyAll(dir) {
+  fs.readdirSync(dir).forEach((file) => {
+    const filePath = path.join(dir, file);
+    const stats = fs.statSync(filePath);
+
+    if (stats.isDirectory()) {
+      minifyAll(filePath);
+    } else if (stats.isFile()) {
+      if (file.endsWith(".js")) {
+        minify({
+          compressor: jsMinifier,
+          input: filePath,
+          output: filePath,
+        });
+      } 
+      // else if (file.endsWith(".html")) {
+      //   minify({
+      //     compressor: htmlMinifier,
+      //     input: filePath,
+      //     output: filePath,
+      //   });
+      // }
+    }
+  });
+}
+
+minifyAll(distPath);
