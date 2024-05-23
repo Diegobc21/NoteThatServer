@@ -1,7 +1,6 @@
 import fs from "fs";
 import path from "path";
 import minify from "@node-minify/core";
-import htmlMinifier from "@node-minify/html-minifier";
 import jsMinifier from "@node-minify/uglify-js";
 
 const sourceFolder = path.join("./", "src", "public");
@@ -32,14 +31,7 @@ function minifyAll(dir) {
           input: filePath,
           output: filePath,
         });
-      } 
-      // else if (file.endsWith(".html")) {
-      //   minify({
-      //     compressor: htmlMinifier,
-      //     input: filePath,
-      //     output: filePath,
-      //   });
-      // }
+      }
     }
   });
 }

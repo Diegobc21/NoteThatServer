@@ -14,7 +14,6 @@
   "license": "ISC",
   "dependencies": {
     "@node-minify/core": "^8.0.6",
-    "@node-minify/html-minifier": "^8.0.6",
     "@node-minify/uglify-js": "^8.0.6",
     "@types/axios": "^0.14.0",
     "axios": "^1.6.8",
