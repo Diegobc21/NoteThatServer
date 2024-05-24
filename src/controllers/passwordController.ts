@@ -1,3 +1,4 @@
+import { title } from "process";
 import Password from "../model/passwordModel.js";
 import Section from "../model/sectionModel.js";
 import User from "../model/userModel.js";
@@ -84,7 +85,7 @@ export const deletePasswordById = (req: any, res: any) => {
 // Agregar una nueva sección
 export const addSection = async (req: any, res: any) => {
   try {
-    const { title } = req.body;
+    const { title, user } = req.body;
 
     if (!title) {
       res
@@ -94,7 +95,7 @@ export const addSection = async (req: any, res: any) => {
     }
 
     // Verificar si la sección ya existe
-    const existingSection = await Section.findOne({ title });
+    const existingSection = await Section.findOne({ title, user });
 
     if (existingSection) {
       res
@@ -108,6 +109,41 @@ export const addSection = async (req: any, res: any) => {
     const savedSection = await newSection.save();
 
     res.status(201).json(savedSection);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+};
+
+// Editar una sección existente
+export const editSection = async (req: any, res: any) => {
+  try {
+    const { section, user } = req.body;
+
+    if (!section) {
+      res
+        .status(400)
+        .json({ error: "No se ha proporcionado ninguna sección." });
+      return;
+    }
+
+    // Verificar si la sección ya existe
+    let existingSection = await Section.updateOne(
+      { _id: section._id, user }, {
+      $set: {
+        title: section.title
+      },
+    }
+    );
+    
+    if (!existingSection) {
+      res
+      .status(409)
+      .json({ error: "La sección no existe en la base de datos." });
+      return;
+    }
+
+    res.status(201).json(section);
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Error interno del servidor." });

@@ -4,6 +4,7 @@ import {
   getPasswordsBySection,
   addPassword,
   addSection,
+  editSection,
   getUserSections,
   deletePasswordById,
   removeSection,
@@ -24,6 +25,8 @@ router.post("/", verifyToken, addPassword);
 router.post("/make-visible", verifyToken, makePasswordsVisible);
 
 router.post("/section", verifyToken, addSection);
+
+router.put("/section", verifyToken, editSection);
 
 router.delete("/:id", verifyToken, deletePasswordById);
 
