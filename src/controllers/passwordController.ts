@@ -150,6 +150,41 @@ export const editSection = async (req: any, res: any) => {
   }
 };
 
+// Editar una contraseña existente
+export const editPassword = async (req: any, res: any) => {
+  try {
+    const { password, user } = req.body;
+
+    if (!password) {
+      res
+        .status(400)
+        .json({ error: "No se ha proporcionado ninguna contraseña." });
+      return;
+    }
+
+    // Verificar si la sección ya existe
+    let existingPassword = await Password.updateOne(
+      { _id: password._id, user }, {
+      $set: {
+        title: password.title
+      },
+    }
+    );
+    
+    if (!existingPassword) {
+      res
+        .status(409)
+        .json({ error: "La contraseña no existe en la base de datos." });
+      return;
+    }
+
+    res.status(201).json(password);
+  } catch (error) {
+    console.error(error);
+    res.status(500).json({ error: "Error interno del servidor." });
+  }
+};
+
 // Eliminar una sección y sus contraseñas
 export const removeSection = async (req: any, res: any) => {
   try {
