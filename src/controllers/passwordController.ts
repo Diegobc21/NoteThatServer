@@ -26,40 +26,76 @@ export const getUserSections = async (req: any, res: any) => {
   }
 };
 
-// Obtener contraseñas por sección
-export const getPasswordsBySection = async (req: any, res: any) => {
+// Obtener contraseñas por sección con censura
+export const getCensoredPasswordsBySection = async (req: any, res: any) => {
   const { section } = req.params;
-  const email = req.user.username;
-
+  const user = req.user.username;
+  
   try {
     // Busca el usuario por su email
-    if (!(await User.findOne({ email }))) {
+    if (!(await User.findOne({ email: user }))) {
       return res.status(404).json({ message: "Usuario no encontrado" });
     }
-
+    
     // Busca la sección por su nombre
     const sectionObj = await Section.findOne({ title: section });
-
+    
     if (!sectionObj) {
       return res.status(404).json({ message: "Sección no encontrada" });
     }
-
+    
     // Busca la contraseña correspondiente al usuario y sección
-    let password = await Password.find({
-      user: email,
+    let passwords = await Password.find({
+      user,
       section,
     });
+    
+    
+    if (!passwords) {
+      return res.status(404).json({
+        message: "Este usuario no contiene contraseñas en la sección: " + section,
+      });
+    }
+    
+    passwords.forEach(p => p.password = null);
 
+    // Devuelve las contraseñas de la sección especificada para el usuario en cuestión
+    res.json(passwords);
+  } catch (error) {
+    console.error("Error al obtener contraseñas:", error);
+    res.status(500).json({ mensaje: "Error interno del servidor" });
+    
+  }
+};
+
+// Obtener contraseña sin censura
+export const getUncensoredPassword = async (req: any, res: any) => {
+  const { id } = req.params;
+  const user = req.user.username;
+  
+  try {
+    // Busca el usuario por su email
+    if (!(await User.findOne({ email: user }))) {
+      return res.status(404).json({ message: "Usuario no encontrado" });
+    }
+    
+    // Busca la contraseña correspondiente al usuario y sección
+    let password = await Password.findOne({
+      _id: id,
+      user
+    });
+    
+    
     if (!password) {
       return res.status(404).json({
-        message: "Contraseña no encontrada para esta sección y usuario",
+        message: "No se ha encontrado contraseña con identificador:" + id,
       });
     }
 
-    // Devuelve las contraseñas de la sección especificada
-    res.json(password);
+    // Devuelve las contraseñas de la sección especificada para el usuario en cuestión
+    res.json({password: password.password});
   } catch (error) {
-    console.error("Error al obtener contraseñas:", error);
+    console.error("Error al obtener contraseña sin censura:", error);
     res.status(500).json({ mensaje: "Error interno del servidor" });
   }
 };
@@ -129,17 +165,18 @@ export const editSection = async (req: any, res: any) => {
 
     // Verificar si la sección ya existe
     let existingSection = await Section.updateOne(
-      { _id: section._id, user }, {
-      $set: {
-        title: section.title
-      },
-    }
+      { _id: section._id, user },
+      {
+        $set: {
+          title: section.title,
+        },
+      }
     );
-    
+
     if (!existingSection) {
       res
-      .status(409)
-      .json({ error: "La sección no existe en la base de datos." });
+        .status(409)
+        .json({ error: "La sección no existe en la base de datos." });
       return;
     }
 
@@ -164,13 +201,14 @@ export const editPassword = async (req: any, res: any) => {
 
     // Verificar si la sección ya existe
     let existingPassword = await Password.updateOne(
-      { _id: password._id, user }, {
-      $set: {
-        title: password.title
-      },
-    }
+      { _id: password._id, user },
+      {
+        $set: {
+          title: password.title,
+        },
+      }
     );
-    
+
     if (!existingPassword) {
       res
         .status(409)
@@ -229,15 +267,17 @@ export const makePasswordsVisible = async (
 ): Promise<void> => {
   try {
     const { email, password } = req.body;
-    User.findOne({ email }).then((user) => {
-      if (user?.password === password) {
-        res.status(200).json({ valid: true });
-        return;
-      } else {
-        res.status(500).json({ valid: false });
-        return;
-      }
-    }).catch((error) => res.sendStatus(500).json(error));
+    User.findOne({ email })
+      .then((user) => {
+        if (user?.password === password) {
+          res.status(200).json({ valid: true });
+          return;
+        } else {
+          res.status(500).json({ valid: false });
+          return;
+        }
+      })
+      .catch((error) => res.sendStatus(500).json(error));
   } catch (error) {
     res.status(500).json({ error: "Error retrieving passwords." });
   }

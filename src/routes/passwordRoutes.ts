@@ -1,7 +1,8 @@
 import { Router } from "express";
 import {
   getAllPasswords,
-  getPasswordsBySection,
+  getCensoredPasswordsBySection,
+  getUncensoredPassword,
   addPassword,
   addSection,
   editSection,
@@ -17,9 +18,11 @@ const router = Router();
 
 router.get("/", verifyToken, getAllPasswords);
 
-router.get("/:section", verifyToken, getPasswordsBySection);
+router.get("/:section", verifyToken, getCensoredPasswordsBySection);
 
 router.get("/section/:user", verifyToken, getUserSections);
+
+router.post("/uncensored/:id", verifyToken, getUncensoredPassword);
 
 router.post("/", verifyToken, addPassword);
 
