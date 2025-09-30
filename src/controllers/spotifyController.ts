@@ -30,9 +30,9 @@ async function fetchWebApi(endpoint: any, method: any, body: any) {
 
 
 const getTopTracks = async (req: any, res: any) => {
-    const topTracks = (await fetchWebApi(
+    const topTracks = ((await fetchWebApi(
         'v1/me/top/tracks?time_range=short_term&limit=5', 'GET', {}
-    )).items
+    )) as any).items
     const response = topTracks?.map(
       ({ name, artists }: { name: string, artists: { name: string }[] }) =>
         `${name} by ${artists.map((artist) => artist.name).join(', ')}`
