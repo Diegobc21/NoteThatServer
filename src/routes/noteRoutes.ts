@@ -4,7 +4,7 @@ import { Router } from "express"
 
 const router = Router()
 
-router.get('/', verifyToken, noteController.getNotesByUserEmail)
+router.post('/all', verifyToken, noteController.getAll)
 
 router.post('/', verifyToken, noteController.addOne)
 

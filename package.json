@@ -13,24 +13,23 @@
   "author": "Diego Barrales Castillo",
   "license": "ISC",
   "dependencies": {
-    "@node-minify/core": "^8.0.6",
-    "@node-minify/uglify-js": "^8.0.6",
-    "@types/axios": "^0.14.0",
-    "axios": "^1.7.7",
+    "@node-minify/core": "^9.0.2",
+    "@node-minify/uglify-js": "^9.0.1",
+    "axios": "^1.7.9",
     "cors": "^2.8.5",
-    "dotenv": "^16.4.5",
-    "express": "^4.21.0",
+    "dotenv": "^16.4.7",
+    "express": "^4.21.2",
     "jsonwebtoken": "^9.0.2",
-    "mongodb": "^6.9.0",
-    "mongoose": "^8.7.0",
+    "mongodb": "^6.12.0",
+    "mongoose": "^8.9.2",
     "querystring": "^0.2.1"
   },
   "devDependencies": {
     "@types/express": "^5.0.0",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/node": "^20.12.8",
-    "concurrently": "^9.0.1",
+    "concurrently": "^9.1.1",
     "standard": "^17.1.2",
-    "typescript": "^5.6.2"
+    "typescript": "^5.7.2"
   }
 }
