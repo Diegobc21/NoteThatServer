@@ -3,6 +3,7 @@ import database from "./config/db.js";
 import noteRoutes from "./routes/noteRoutes.js";
 //import spotifyRoutes from "./routes/spotifyRoutes.js";
 import passwordRoutes from "./routes/passwordRoutes.js";
+import sectionRoutes from "./routes/sectionRoutes.js";
 import quoteRoutes from "./routes/quoteRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 
@@ -32,6 +33,7 @@ app.use("/user", userRoutes);
 app.use("/note", noteRoutes);
 //app.use("/spotify", spotifyRoutes);
 app.use("/password", passwordRoutes);
+app.use("/section", sectionRoutes);
 app.use("/quote", quoteRoutes);
 
 // Start server
