@@ -9,6 +9,7 @@ const passwordSchema = new mongoose.Schema(
     section: {
       type: String,
       required: true,
+      index: true,
     },
     password: {
       type: String,
@@ -16,18 +17,31 @@ const passwordSchema = new mongoose.Schema(
     },
     email: {
       type: String,
-      required: true,
+      trim: true,
     },
     username: {
       type: String,
+      trim: true,
+    },
+    user: {
+      type: String,
+      required: true,
+      immutable: true,
+      index: true,
     },
     creationDate: {
-      type: String,
-      default: Date.now(),
+      type: Date,
+      default: Date.now,
+      immutable: true,
     },
   },
-  { versionKey: false }
+  {
+    versionKey: false,
+    timestamps: { createdAt: false, updatedAt: true },
+  }
 );
+
+passwordSchema.index({ user: 1, section: 1, creationDate: -1 });
 
 /**
  * passItem: nombre del modelo

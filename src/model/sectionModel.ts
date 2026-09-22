@@ -5,18 +5,28 @@ const sectionSchema = new mongoose.Schema(
     title: {
       type: String,
       required: true,
+      trim: true,
+      maxlength: 200,
     },
     user: {
       type: String,
       required: true,
+      immutable: true,
+      index: true,
     },
     creationDate: {
-      type: String,
-      default: Date.now(),
+      type: Date,
+      default: Date.now,
+      immutable: true,
     }
   },
-  { versionKey: false }
+  {
+    versionKey: false,
+    timestamps: { createdAt: false, updatedAt: true },
+  }
 );
+
+sectionSchema.index({ user: 1, title: 1 });
 
 /**
  * sectionItem: nombre del modelo

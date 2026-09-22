@@ -1,121 +1,155 @@
+import { Response } from "express";
 import Password from "../model/passwordModel.js";
 import Section from "../model/sectionModel.js";
+import { AuthenticatedRequest } from "../middlewares/tokenVerify.js";
 
-// Obtener todas las secciones del usuario
-export const getUserSections = async (req: any, res: any) => {
-  const email = req.params.email;
+type SectionPayload = {
+  title?: unknown;
+};
 
-  if (email) {
-    Section.find({ user: email })
-      .then((sections) => {
-        res.json(sections);
-      })
-      .catch((error) => res.status(500).send(error));
+const ownerOf = (req: AuthenticatedRequest): string => req.user!.username;
+
+const passwordOwnershipFilter = (user: string) => ({
+  $or: [
+    { user },
+    { user: { $exists: false }, email: user },
+  ],
+});
+
+export const getUserSections = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const sections = await Section.find({ user: ownerOf(req) })
+      .sort({ creationDate: 1 })
+      .exec();
+    res.json(sections);
+  } catch (error) {
+    console.error("Unable to list sections:", error);
+    res.status(500).json({ error: "Unable to retrieve sections." });
   }
 };
 
-// Agregar una nueva sección
-export const addSection = async (req: any, res: any) => {
+export const addSection = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  const { title } = req.body as SectionPayload;
+
+  if (typeof title !== "string" || title.trim().length === 0) {
+    res.status(400).json({ error: "A section title is required." });
+    return;
+  }
+
   try {
-    const { title, user } = req.body;
-
-    if (!title) {
-      res
-        .status(400)
-        .json({ error: "El título de la sección es obligatorio." });
-      return;
-    }
-
-    // Verificar si la sección ya existe
-    const existingSection = await Section.findOne({ title, user });
+    const user = ownerOf(req);
+    const normalizedTitle = title.trim();
+    const existingSection = await Section.exists({ title: normalizedTitle, user });
 
     if (existingSection) {
-      res
-        .status(409)
-        .json({ error: "La sección ya existe en la base de datos." });
+      res.status(409).json({ error: "A section with this title already exists." });
       return;
     }
 
-    // Si no existe, agregar la nueva sección
-    const newSection = new Section(req.body);
-    const savedSection = await newSection.save();
-
-    res.status(201).json(savedSection);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error interno del servidor." });
-  }
-};
-
-// Editar una sección existente
-export const editSection = async (req: any, res: any) => {
-  try {
-    const { section, user } = req.body;
-
-    if (!section) {
-      res
-        .status(400)
-        .json({ error: "No se ha proporcionado ninguna sección." });
-      return;
-    }
-
-    // Verificar si la sección ya existe
-    let existingSection = await Section.updateOne(
-      { _id: section._id, user },
-      {
-        $set: {
-          title: section.title,
-        },
-      }
-    );
-
-    if (!existingSection) {
-      res
-        .status(409)
-        .json({ error: "La sección no existe en la base de datos." });
-      return;
-    }
-
+    const section = await Section.create({ title: normalizedTitle, user });
     res.status(201).json(section);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error interno del servidor." });
+    console.error("Unable to create section:", error);
+    res.status(500).json({ error: "Unable to create section." });
   }
 };
 
-// Eliminar una sección y sus contraseñas
-export const removeSection = async (req: any, res: any) => {
-  try {
-    const { id } = req.params;
+export const editSection = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  const { title } = req.body as SectionPayload;
 
-    if (!id) {
-      res.status(400).json({ error: "El ID de la sección es obligatorio." });
+  if (typeof title !== "string" || title.trim().length === 0) {
+    res.status(400).json({ error: "A section title is required." });
+    return;
+  }
+
+  try {
+    const user = ownerOf(req);
+    const normalizedTitle = title.trim();
+    const duplicate = await Section.exists({
+      _id: { $ne: req.params.id },
+      title: normalizedTitle,
+      user,
+    });
+
+    if (duplicate) {
+      res.status(409).json({ error: "A section with this title already exists." });
       return;
     }
 
-    // Verificar si la sección ya existe
-    const existingSection = await Section.findOne({ _id: id });
+    const existingSection = await Section.findOne({
+      _id: req.params.id,
+      user,
+    }).lean();
 
     if (!existingSection) {
-      res
-        .status(404)
-        .json({ error: "La sección no existe en la base de datos." });
+      res.status(404).json({ error: "Section not found." });
       return;
     }
 
-    // Si existe, eliminar la sección y sus contraseñas asociadas
-    const removedSection = await Section.deleteOne({ _id: id })
-      .then(() => {
-        Password.deleteMany({ section: existingSection.title }).then(
-          () => null
-        );
-        res.status(200);
-      })
-      .catch((error) => res.sendStatus(500).send(error));
+    const section = await Section.findOneAndUpdate(
+      { _id: req.params.id, user },
+      { $set: { title: normalizedTitle } },
+      { new: true, runValidators: true },
+    ).exec();
 
-    res.status(201).json(removedSection);
+    // Move legacy title-linked passwords to the stable section ID.
+    await Password.updateMany(
+      {
+        $and: [
+          passwordOwnershipFilter(user),
+          { section: existingSection.title },
+        ],
+      },
+      { $set: { section: req.params.id, user } },
+    ).exec();
+
+    res.json(section);
   } catch (error) {
-    console.error(error);
-    res.status(500).json({ error: "Error interno del servidor." });
+    console.error("Unable to update section:", error);
+    res.status(404).json({ error: "Section not found." });
+  }
+};
+
+export const removeSection = async (
+  req: AuthenticatedRequest,
+  res: Response,
+): Promise<void> => {
+  try {
+    const user = ownerOf(req);
+    const section = await Section.findOneAndDelete({
+      _id: req.params.id,
+      user,
+    }).lean();
+
+    if (!section) {
+      res.status(404).json({ error: "Section not found." });
+      return;
+    }
+
+    await Password.deleteMany({
+      $and: [
+        passwordOwnershipFilter(user),
+        {
+          $or: [
+            { section: section._id.toString() },
+            { section: section.title },
+          ],
+        },
+      ],
+    }).exec();
+
+    res.status(204).send();
+  } catch (error) {
+    console.error("Unable to delete section:", error);
+    res.status(404).json({ error: "Section not found." });
   }
 };

@@ -11,7 +11,7 @@ import { verifyToken } from "../middlewares/tokenVerify.js";
 
 const router = Router();
 
-router.post("/bySection", verifyToken, getCensoredPasswordsBySection);
+router.get("/section/:sectionId", verifyToken, getCensoredPasswordsBySection);
 
 router.get("/uncensored/:id", verifyToken, getUncensoredPasswordById);
 

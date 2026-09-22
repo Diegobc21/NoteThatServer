@@ -49,28 +49,27 @@ export const addOne = async (req: any, res: any) => {
 export const login = async (req: any, res: any): Promise<void> => {
   const { email, password } = req.body;
 
-  userModel
-    .findOne({ email })
-    .exec()
-    .then((user) => {
-      if (!user) {
-        res.status(404).json({ error: "User not found" });
-      }
+  try {
+    const user = await userModel.findOne({ email }).exec();
 
-      if (user?.password !== password) {
-        res.status(401).json({ error: "Wrong password" });
-      }
+    if (!user) {
+      res.status(404).json({ error: "User not found" });
+      return;
+    }
 
-      user?.save();
-    })
-    .then(() => {
-      const token = jwt.sign({ username: email }, "token");
-      res.status(200).json({
-        email,
-        token,
-      });
-    })
-    .catch(() => {
-      res.status(401);
-    });
+    if (user.password !== password) {
+      res.status(401).json({ error: "Wrong password" });
+      return;
+    }
+
+    const token = jwt.sign(
+      { username: email },
+      process.env.JWT_SECRET ?? "token",
+      { expiresIn: "12h" },
+    );
+    res.status(200).json({ email, token });
+  } catch (error) {
+    console.error("Unable to log in:", error);
+    res.status(500).json({ error: "Unable to log in" });
+  }
 };

@@ -9,11 +9,11 @@ import { verifyToken } from "../middlewares/tokenVerify.js";
 
 const router = Router();
 
-router.get("/:email", verifyToken, getUserSections);
+router.get("/", verifyToken, getUserSections);
 
 router.post("/", verifyToken, addSection);
 
-router.put("/", verifyToken, editSection);
+router.put("/:id", verifyToken, editSection);
 
 router.delete("/:id", verifyToken, removeSection);
 

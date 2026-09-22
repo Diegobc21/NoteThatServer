@@ -1,21 +1,38 @@
 import mongoose from 'mongoose'
 
-const noteSchema = new mongoose.Schema({
-  title: {
-    type: String
+const noteSchema = new mongoose.Schema(
+  {
+    title: {
+      type: String,
+      required: true,
+      trim: true,
+      maxlength: 200,
+    },
+    content: {
+      type: String,
+      default: "",
+      maxlength: 50_000,
+    },
+    // This field is kept for compatibility with existing notes and clients.
+    creationDate: {
+      type: Date,
+      default: Date.now,
+      immutable: true,
+    },
+    user: {
+      type: String,
+      required: true,
+      immutable: true,
+      index: true,
+    },
   },
-  content: {
-    type: String
+  {
+    versionKey: false,
+    timestamps: { createdAt: false, updatedAt: true },
   },
-  creationDate: {
-    type: Date,
-    default: Date.now
-  },
-  user: {
-    type: String,
-    required: true
-  }
-}, { versionKey: false })
+);
+
+noteSchema.index({ user: 1, creationDate: -1 });
 
 /**
  * userItem: nombre del modelo
